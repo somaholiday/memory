@@ -1,6 +1,6 @@
 {
   "name": "pi-memory-vault",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "SQLite-backed long-term Markdown memory for Pi",
   "author": "Soma Holiday <soma@somaholiday.com>",
   "license": "MIT",
