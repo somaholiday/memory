@@ -20,8 +20,8 @@
   },
   "files": ["dist", "skills", "README.md", "LICENSE"],
   "bin": {
-    "memory-skills": "./dist/install.js",
-    "memory-vault": "./dist/cli.js"
+    "memory-skills": "dist/install.js",
+    "memory-vault": "dist/cli.js"
   },
   "dependencies": {
     "better-sqlite3": "^12.8.0",
