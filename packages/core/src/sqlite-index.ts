@@ -145,10 +145,16 @@ function dbPathFor(vaultPath: string, suffix: string): string {
 	return path.join(cacheDir(), `${hash}${suffix}`);
 }
 
+export function indexPathsForVault(vaultPath: string): { indexPath: string; embeddingCachePath: string } {
+	return {
+		indexPath: dbPathFor(vaultPath, ".db"),
+		embeddingCachePath: dbPathFor(vaultPath, ".emb.db"),
+	};
+}
+
 /** Create a SQLite-backed VaultIndex for the given vault directory. */
 export function createSqliteIndex(vaultPath: string): VaultIndex {
-	const dbPath = dbPathFor(vaultPath, ".db");
-	const embCachePath = dbPathFor(vaultPath, ".emb.db");
+	const { indexPath: dbPath, embeddingCachePath: embCachePath } = indexPathsForVault(vaultPath);
 	const { model, dimensions } = getEmbeddingConfig();
 	const embeddingCacheKey = `${model}:${dimensions}`;
 	let db: SqliteDatabase | null = null;

@@ -5,6 +5,7 @@
   "license": "MIT",
   "type": "module",
   "engines": { "node": ">=20" },
+  "publishConfig": { "access": "public" },
   "keywords": ["pi-package", "memory", "markdown", "sqlite"],
   "files": ["dist", "README.md", "LICENSE"],
   "pi": {
@@ -22,6 +23,7 @@
     "typebox": "*"
   },
   "scripts": {
-    "build": "tsup src/index.ts --format esm --platform node --out-dir dist --external better-sqlite3 --external sqlite-vec --external @earendil-works/pi-ai --external @earendil-works/pi-coding-agent --external @earendil-works/pi-tui --external typebox"
+    "build": "tsup src/index.ts --format esm --platform node --out-dir dist --external better-sqlite3 --external sqlite-vec --external @earendil-works/pi-ai --external @earendil-works/pi-coding-agent --external @earendil-works/pi-tui --external typebox",
+    "prepack": "npm run build"
   }
 }

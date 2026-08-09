@@ -27,6 +27,8 @@ export interface VaultStatus {
   path: string;
   initialized: boolean;
   files: number;
+  indexPath: string;
+  embeddingCachePath: string;
   git: boolean;
   embeddingsConfigured: boolean;
 }

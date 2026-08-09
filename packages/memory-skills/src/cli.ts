@@ -65,6 +65,8 @@ async function main(): Promise<void> {
         `Vault: ${status.path}`,
         `Initialized: ${status.initialized ? "yes" : "no"}`,
         `Memories: ${status.files}`,
+        `Index: ${status.indexPath}`,
+        `Embedding cache: ${status.embeddingCachePath}`,
         `Git: ${status.git ? "yes" : "no"}`,
         `Embeddings: ${status.embeddingsConfigured ? "configured" : "disabled (BM25 only)"}`,
       ].join("\n"));

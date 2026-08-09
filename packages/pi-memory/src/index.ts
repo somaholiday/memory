@@ -42,6 +42,7 @@ export default function memoryExtension(pi: ExtensionAPI) {
     promptGuidelines: [
       "Use memory_read with action 'search' when prior decisions or saved context may help.",
       "Use memory_read with action 'list' to inspect available memories before broad exploration.",
+      "Use memory_read with action 'init' only when the user asks to create the configured vault."
     ],
     parameters: Type.Object({
       action: StringEnum(["init", "status", "index", "list", "search", "read", "validate"] as const),
@@ -59,6 +60,8 @@ export default function memoryExtension(pi: ExtensionAPI) {
             `Vault: ${status.path}`,
             `Initialized: ${status.initialized ? "yes" : "no"}`,
             `Memories: ${status.files}`,
+            `Index: ${status.indexPath}`,
+            `Embedding cache: ${status.embeddingCachePath}`,
             `Git: ${status.git ? "yes" : "no"}`,
             `Search: ${status.embeddingsConfigured ? "BM25 + vectors" : "BM25"}`,
           ].join("\n");
@@ -139,9 +142,21 @@ export default function memoryExtension(pi: ExtensionAPI) {
       }
       if (input === "status") {
         const status = vault.status();
-        ctx.ui.notify(`${status.files} memories in ${status.path}`, status.initialized ? "info" : "warning");
+        ctx.ui.notify([
+          `${status.files} memories in ${status.path}`,
+          `Index: ${status.indexPath}`,
+          `Search: ${status.embeddingsConfigured ? "BM25 + vectors" : "BM25"}`,
+          `Git: ${status.git ? "yes" : "no"}`,
+        ].join("\n"), status.initialized ? "info" : "warning");
         return;
       }
+
+      if (!vault.status().initialized) {
+        if (!ctx.hasUI || !await ctx.ui.confirm("Initialize memory vault?", `Create ${vault.path}?`)) return;
+        vault.init();
+        ctx.ui.notify(`Memory vault ready: ${vault.path}`, "info");
+      }
+
       if (input) {
         const result = await vault.search(input);
         if (result.files.length === 0) {

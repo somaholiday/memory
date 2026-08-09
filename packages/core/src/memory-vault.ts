@@ -5,7 +5,7 @@ import { execFileSync } from "node:child_process";
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
-import { createSqliteIndex } from "./sqlite-index.js";
+import { createSqliteIndex, indexPathsForVault } from "./sqlite-index.js";
 import { embedQuery, hasEmbeddingCredentials } from "./embeddings.js";
 import { bm25Query, searchMemories } from "./search.js";
 import { validateMemoryContent, validateVault } from "./validation.js";
@@ -78,6 +78,7 @@ export class MemoryVault {
       path: this.path,
       initialized,
       files: initialized ? this.list().length : 0,
+      ...indexPathsForVault(this.path),
       git: initialized && isGitRepo(this.path),
       embeddingsConfigured: hasEmbeddingCredentials(),
     };

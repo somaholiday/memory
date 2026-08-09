@@ -5,6 +5,7 @@
   "license": "MIT",
   "type": "module",
   "engines": { "node": ">=20" },
+  "publishConfig": { "access": "public" },
   "keywords": ["agent-skills", "pi-package", "memory", "markdown", "sqlite"],
   "pi": {
     "skills": ["./skills"]
@@ -19,6 +20,7 @@
     "yaml": "^2.9.0"
   },
   "scripts": {
-    "build": "tsup src/cli.ts --format esm --platform node --out-dir dist --external better-sqlite3 --external sqlite-vec && node -e \"require('node:fs').chmodSync('dist/cli.js', 0o755)\""
+    "build": "tsup src/cli.ts --format esm --platform node --out-dir dist --external better-sqlite3 --external sqlite-vec && node -e \"require('node:fs').chmodSync('dist/cli.js', 0o755)\"",
+    "prepack": "npm run build"
   }
 }
