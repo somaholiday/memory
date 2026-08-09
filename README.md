@@ -4,7 +4,7 @@ Portable long-term memory backed by Markdown and a disposable SQLite index.
 
 This repository contains two user-facing packages:
 
-- `pi-memory` — native tools and an interactive browser for Pi.
+- `pi-memory-vault` — native tools and an interactive browser for Pi.
 - `memory-skills` — Agent Skills standard workflows plus a CLI for any harness.
 
 Both packages bundle the same private core module, so search, validation, indexing, and writes behave the same everywhere.

@@ -1,5 +1,5 @@
 {
-  "name": "pi-memory",
+  "name": "pi-memory-vault",
   "version": "0.1.0",
   "description": "SQLite-backed long-term Markdown memory for Pi",
   "license": "MIT",

@@ -1,11 +1,11 @@
-# pi-memory
+# pi-memory-vault
 
 SQLite-backed long-term Markdown memory for [Pi](https://pi.dev).
 
 ## Install
 
 ```bash
-pi install npm:pi-memory
+pi install npm:pi-memory-vault
 ```
 
 For a local checkout:
