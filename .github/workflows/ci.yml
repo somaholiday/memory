@@ -17,9 +17,16 @@ jobs:
           node-version: ${{ matrix.node-version }}
           cache: npm
       - run: npm ci
-      - run: npm test
+      - name: Test portable core and skills
+        if: matrix.node-version == 20
+        run: npx vitest run packages/core packages/memory-skills
+      - name: Test all packages
+        if: matrix.node-version != 20
+        run: npm test
       - run: npm run typecheck
       - run: npm run build
       - run: npm audit --omit=dev
-      - run: npm pack --dry-run ./packages/pi-memory
+      - name: Pack Pi extension
+        if: matrix.node-version != 20
+        run: npm pack --dry-run ./packages/pi-memory
       - run: npm pack --dry-run ./packages/memory-skills

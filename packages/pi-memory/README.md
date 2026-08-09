@@ -1,5 +1,7 @@
 # pi-memory-vault
 
+Requires Node.js 22.19 or newer, matching current Pi releases.
+
 SQLite-backed long-term Markdown memory for [Pi](https://pi.dev).
 
 ## Install
