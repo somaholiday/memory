@@ -2,7 +2,15 @@
   "name": "pi-memory-vault",
   "version": "0.1.0",
   "description": "SQLite-backed long-term Markdown memory for Pi",
+  "author": "Soma Holiday <soma@somaholiday.com>",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/somaholiday/memory.git",
+    "directory": "packages/pi-memory"
+  },
+  "homepage": "https://github.com/somaholiday/memory#readme",
+  "bugs": "https://github.com/somaholiday/memory/issues",
   "type": "module",
   "engines": { "node": ">=20" },
   "publishConfig": { "access": "public" },

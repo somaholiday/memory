@@ -3,6 +3,9 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
+  "author": "Soma Holiday <soma@somaholiday.com>",
+  "license": "MIT",
+  "repository": "github:somaholiday/memory",
   "workspaces": ["packages/*"],
   "scripts": {
     "build": "npm run build --workspace packages/pi-memory && npm run build --workspace packages/memory-skills",

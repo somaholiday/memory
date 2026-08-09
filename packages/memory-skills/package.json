@@ -2,7 +2,15 @@
   "name": "memory-skills",
   "version": "0.1.0",
   "description": "Harness-neutral skills and CLI for a SQLite-backed Markdown memory vault",
+  "author": "Soma Holiday <soma@somaholiday.com>",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/somaholiday/memory.git",
+    "directory": "packages/memory-skills"
+  },
+  "homepage": "https://github.com/somaholiday/memory#readme",
+  "bugs": "https://github.com/somaholiday/memory/issues",
   "type": "module",
   "engines": { "node": ">=20" },
   "publishConfig": { "access": "public" },
