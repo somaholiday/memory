@@ -2,6 +2,7 @@
 // Temporary vaults keep path safety and first-run behavior isolated.
 
 import { afterEach, describe, expect, test } from "vitest";
+import { execFileSync } from "node:child_process";
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
@@ -50,6 +51,29 @@ describe("MemoryVault", () => {
 
     vault.delete("2026-08-08 test-memory.md");
     expect(vault.list()).toEqual([]);
+  });
+
+  test("commits only the requested memory", () => {
+    const vault = temporaryVault();
+    vault.init();
+    execFileSync("git", ["init"], { cwd: vault.path, stdio: "ignore" });
+    execFileSync("git", ["config", "user.name", "Memory Test"], { cwd: vault.path });
+    execFileSync("git", ["config", "user.email", "memory@example.invalid"], { cwd: vault.path });
+    fs.writeFileSync(path.join(vault.path, "unrelated.txt"), "leave staged\n");
+    execFileSync("git", ["add", "unrelated.txt"], { cwd: vault.path });
+
+    vault.write({ path: "2026-08-08 test-memory.md", content, commitMessage: "Add test memory" });
+
+    const committed = execFileSync("git", ["show", "--pretty=", "--name-only", "HEAD"], {
+      cwd: vault.path,
+      encoding: "utf-8",
+    }).trim();
+    const staged = execFileSync("git", ["diff", "--cached", "--name-only"], {
+      cwd: vault.path,
+      encoding: "utf-8",
+    }).trim();
+    expect(committed).toBe("2026-08-08 test-memory.md");
+    expect(staged).toBe("unrelated.txt");
   });
 
   test("rejects paths outside the vault", () => {
