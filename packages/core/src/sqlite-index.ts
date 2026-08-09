@@ -4,7 +4,6 @@
 // persistent embedding cache so the disposable index can be rebuilt cheaply.
 
 import Database from "better-sqlite3";
-import * as sqliteVec from "sqlite-vec";
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
@@ -163,7 +162,6 @@ export function createSqliteIndex(vaultPath: string): VaultIndex {
 	function openDb(): SqliteDatabase {
 		if (!db) {
 			db = new Database(dbPath);
-			sqliteVec.load(db);
 			db.pragma("journal_mode=WAL");
 			db.pragma("foreign_keys=ON");
 		}
@@ -219,13 +217,9 @@ export function createSqliteIndex(vaultPath: string): VaultIndex {
 		}
 
 		db = new Database(dbPath);
-		sqliteVec.load(db);
 		db.pragma("journal_mode=WAL");
 		db.pragma("foreign_keys=ON");
 		db.exec(SCHEMA);
-		// vec0 store keyed by files.id; dimensions come from the embedding model.
-		db.exec(`CREATE VIRTUAL TABLE vec_files USING vec0(embedding float[${dimensions}]);`);
-
 		const mdFiles = fs.readdirSync(vaultPath)
 			.filter((f) => f.endsWith(".md") && !f.startsWith("."));
 
@@ -277,6 +271,14 @@ export function createSqliteIndex(vaultPath: string): VaultIndex {
 	async function ensureEmbeddings(): Promise<boolean> {
 		ensureFresh();
 		const d = openDb();
+		try {
+			const sqliteVec = await import("sqlite-vec");
+			sqliteVec.load(d);
+			d.exec(`CREATE VIRTUAL TABLE IF NOT EXISTS vec_files USING vec0(embedding float[${dimensions}]);`);
+		} catch (error) {
+			console.error(`[memory-vault] vector search unavailable: ${error}`);
+			return false;
+		}
 
 		const files = d.prepare("SELECT id, path, content_hash FROM files").all() as
 			{ id: number; path: string; content_hash: string }[];

@@ -16,8 +16,10 @@
   },
   "dependencies": {
     "better-sqlite3": "^12.8.0",
-    "sqlite-vec": "^0.1.9",
     "yaml": "^2.9.0"
+  },
+  "optionalDependencies": {
+    "sqlite-vec": "^0.1.9"
   },
   "scripts": {
     "build": "tsup src/cli.ts --format esm --platform node --out-dir dist --external better-sqlite3 --external sqlite-vec && node -e \"require('node:fs').chmodSync('dist/cli.js', 0o755)\"",

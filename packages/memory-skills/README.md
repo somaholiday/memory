@@ -37,6 +37,6 @@ memory-vault validate
 memory-vault write "2026-08-08 deployment.md" --content-file draft.md
 ```
 
-Set `OPENAI_API_KEY` to add vector search. Without it, all indexed commands use BM25.
+Set `OPENAI_API_KEY` to add vector search where the optional `sqlite-vec` package is supported. Without either piece, indexed commands use BM25.
 
 Git is optional. Pass `--commit-message` on a write to commit only that memory when the vault is already a Git repository.

@@ -63,7 +63,7 @@ export default function memoryExtension(pi: ExtensionAPI) {
             `Index: ${status.indexPath}`,
             `Embedding cache: ${status.embeddingCachePath}`,
             `Git: ${status.git ? "yes" : "no"}`,
-            `Search: ${status.embeddingsConfigured ? "BM25 + vectors" : "BM25"}`,
+            `Embeddings: ${status.embeddingsConfigured ? "configured" : "disabled"}`,
           ].join("\n");
           return { content: [{ type: "text" as const, text }], details: status as unknown as Record<string, unknown> };
         }
@@ -145,7 +145,7 @@ export default function memoryExtension(pi: ExtensionAPI) {
         ctx.ui.notify([
           `${status.files} memories in ${status.path}`,
           `Index: ${status.indexPath}`,
-          `Search: ${status.embeddingsConfigured ? "BM25 + vectors" : "BM25"}`,
+          `Embeddings: ${status.embeddingsConfigured ? "configured" : "disabled"}`,
           `Git: ${status.git ? "yes" : "no"}`,
         ].join("\n"), status.initialized ? "info" : "warning");
         return;

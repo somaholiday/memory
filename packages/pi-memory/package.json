@@ -13,8 +13,10 @@
   },
   "dependencies": {
     "better-sqlite3": "^12.8.0",
-    "sqlite-vec": "^0.1.9",
     "yaml": "^2.9.0"
+  },
+  "optionalDependencies": {
+    "sqlite-vec": "^0.1.9"
   },
   "peerDependencies": {
     "@earendil-works/pi-ai": "*",

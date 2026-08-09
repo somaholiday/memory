@@ -27,7 +27,7 @@ The extension registers `memory_read`, `memory_write`, and `/memory`. It works w
 
 `MEMORY_VAULT` selects the Markdown directory. Without it, the extension uses `~/Memory`.
 
-Search uses SQLite FTS5 BM25 by default. Set `OPENAI_API_KEY` to add vector search. Advanced embedding settings live at `$XDG_CONFIG_HOME/memory-vault/embeddings.json`:
+Search uses SQLite FTS5 BM25 by default. Set `OPENAI_API_KEY` to add vector search where the optional `sqlite-vec` package is supported. Advanced embedding settings live at `$XDG_CONFIG_HOME/memory-vault/embeddings.json`:
 
 ```json
 {
