@@ -25,6 +25,6 @@ Keep harness-specific behavior in adapters. Vault rules, validation, search, and
 npm test
 npm run typecheck
 npm run build
-npm pack --dry-run --workspace packages/pi-memory
-npm pack --dry-run --workspace packages/memory-skills
+npm pack --dry-run ./packages/pi-memory
+npm pack --dry-run ./packages/memory-skills
 ```

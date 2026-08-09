@@ -8,7 +8,7 @@ import {
   formatSearchResponse,
   formatValidationResult,
   openMemoryVault,
-} from "@memory-vault/core";
+} from "../../core/src/index.js";
 
 const HELP = `memory-vault <command> [arguments]
 

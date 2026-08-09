@@ -17,7 +17,7 @@ import {
   formatSearchResponse,
   formatValidationResult,
   openMemoryVault,
-} from "@memory-vault/core";
+} from "../../core/src/index.js";
 
 export default function memoryExtension(pi: ExtensionAPI) {
   const vault = openMemoryVault();

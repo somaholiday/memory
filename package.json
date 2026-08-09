@@ -6,9 +6,8 @@
   "author": "Soma Holiday <soma@somaholiday.com>",
   "license": "MIT",
   "repository": "github:somaholiday/memory",
-  "workspaces": ["packages/*"],
   "scripts": {
-    "build": "npm run build --workspace packages/pi-memory && npm run build --workspace packages/memory-skills",
+    "build": "npm run build --prefix packages/pi-memory && npm run build --prefix packages/memory-skills",
     "test": "vitest run",
     "typecheck": "tsc --noEmit"
   },
@@ -18,9 +17,12 @@
     "@earendil-works/pi-tui": "^0.84.1",
     "@types/better-sqlite3": "^7.6.13",
     "@types/node": "^24.0.0",
+    "better-sqlite3": "^12.8.0",
+    "sqlite-vec": "^0.1.9",
     "tsup": "^8.5.0",
     "typebox": "^1.3.11",
     "typescript": "^5.9.0",
-    "vitest": "^4.1.10"
+    "vitest": "^4.1.10",
+    "yaml": "^2.9.0"
   }
 }
