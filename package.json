@@ -1,5 +1,6 @@
 {
   "name": "memory-vault-workspace",
+  "version": "0.0.0",
   "private": true,
   "type": "module",
   "workspaces": ["packages/*"],

@@ -184,7 +184,7 @@ Approval of an audit summary is not approval of unseen replacement text.
 
 ## Phase 7: Apply Approved Cleanup
 
-1. Delete only approved paths.
+1. Delete only approved paths. Prefer `memory-vault delete "<filename>.md"` when the bundled CLI is available.
 2. Write only approved replacement drafts.
 3. Ensure every surviving memory has a filename-derived title, one-line description, and accurate status.
 4. Repair `related` frontmatter and body links in surviving notes.

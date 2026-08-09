@@ -47,6 +47,9 @@ describe("MemoryVault", () => {
       "2026-08-08 test-memory.md",
     ]);
     expect(vault.validate().errors).toEqual([]);
+
+    vault.delete("2026-08-08 test-memory.md");
+    expect(vault.list()).toEqual([]);
   });
 
   test("rejects paths outside the vault", () => {

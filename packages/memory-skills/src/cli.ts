@@ -19,6 +19,7 @@ Commands:
   search <query>               Search with BM25 and optional vectors
   read <filename.md>           Read one memory
   write <filename.md>          Write content from --content-file or stdin
+  delete <filename.md>         Delete one memory
   validate                     Validate all memories
 
 Options:
@@ -100,6 +101,13 @@ async function main(): Promise<void> {
         commitMessage: values["commit-message"],
       });
       output(result, () => `Memory saved: ${result.path}${result.commit ? `\n${result.commit}` : ""}`);
+      return;
+    }
+    case "delete": {
+      const filename = args[0];
+      if (!filename) throw new Error("delete requires a filename");
+      const result = vault.delete(filename, values["commit-message"]);
+      output(result, () => `Memory deleted: ${result.path}${result.commit ? `\n${result.commit}` : ""}`);
       return;
     }
     case "validate": {

@@ -44,7 +44,7 @@ export default function memoryExtension(pi: ExtensionAPI) {
       "Use memory_read with action 'list' to inspect available memories before broad exploration.",
     ],
     parameters: Type.Object({
-      action: StringEnum(["init", "status", "list", "search", "read", "validate"] as const),
+      action: StringEnum(["init", "status", "index", "list", "search", "read", "validate"] as const),
       query: Type.Optional(Type.String({ description: "Search text or root-level memory filename" })),
     }),
     async execute(_toolCallId, params) {
@@ -64,6 +64,7 @@ export default function memoryExtension(pi: ExtensionAPI) {
           ].join("\n");
           return { content: [{ type: "text" as const, text }], details: status as unknown as Record<string, unknown> };
         }
+        case "index":
         case "list": {
           const files = vault.list();
           const listing = files.map((file) => `- **${file.path}**${file.preview ? ` — ${file.preview}` : ""}`).join("\n");

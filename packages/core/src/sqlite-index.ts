@@ -70,16 +70,21 @@ export function parseFile(filePath: string, filename: string): ParsedFile {
 
 	const fmMatch = content.match(/^---\r?\n([\s\S]*?)\r?\n---/);
 	if (fmMatch) {
-		const fm = fmMatch[1];
-		const metadata = parseDocument(fm, { prettyErrors: false }).toJS();
-		if (metadata && typeof metadata === "object" && !Array.isArray(metadata)) {
-			if (typeof metadata.title === "string") frontmatterTitle = metadata.title.trim();
-			if (typeof metadata.description === "string") frontmatterDescription = metadata.description.trim();
+		const document = parseDocument(fmMatch[1], { prettyErrors: false });
+		if (document.errors.length === 0) {
+			const metadata = document.toJS();
+			if (metadata && typeof metadata === "object" && !Array.isArray(metadata)) {
+				if (typeof metadata.title === "string") frontmatterTitle = metadata.title.trim();
+				if (typeof metadata.description === "string") frontmatterDescription = metadata.description.trim();
+				if (typeof metadata.date === "string") result.date = metadata.date.trim();
+				if (Array.isArray(metadata.tags)) {
+					result.tags = metadata.tags.filter((tag: unknown): tag is string => typeof tag === "string");
+				}
+				if (Array.isArray(metadata.related)) {
+					result.related = metadata.related.filter((ref: unknown): ref is string => typeof ref === "string");
+				}
+			}
 		}
-		const dateMatch = fm.match(/^date:\s*(.+)$/m);
-		if (dateMatch) result.date = dateMatch[1].trim();
-		result.tags = parseYamlList(fm, "tags");
-		result.related = parseYamlList(fm, "related");
 	}
 
 	// Body is everything after frontmatter
@@ -102,19 +107,6 @@ export function parseFile(filePath: string, filename: string): ParsedFile {
 	}
 
 	return result;
-}
-
-/** Parse a YAML key that holds either [inline, list] or indented "- item" entries. */
-function parseYamlList(yaml: string, key: string): string[] {
-	const inlineMatch = yaml.match(new RegExp(`^${key}:\\s*\\[([^\\]]*)\\]`, "m"));
-	if (inlineMatch) {
-		return inlineMatch[1].split(",").map((s) => s.trim()).filter(Boolean);
-	}
-	const listMatch = yaml.match(new RegExp(`^${key}:\\s*\\n((?:\\s+- .+\\n?)*)`, "m"));
-	if (listMatch) {
-		return [...listMatch[1].matchAll(/^\s+- (.+)$/gm)].map((m) => m[1].trim());
-	}
-	return [];
 }
 
 /** Resolve a related entry to a filename. Handles wikilinks and bare filenames. */
@@ -158,6 +150,7 @@ export function createSqliteIndex(vaultPath: string): VaultIndex {
 	const dbPath = dbPathFor(vaultPath, ".db");
 	const embCachePath = dbPathFor(vaultPath, ".emb.db");
 	const { model, dimensions } = getEmbeddingConfig();
+	const embeddingCacheKey = `${model}:${dimensions}`;
 	let db: SqliteDatabase | null = null;
 	let embCache: SqliteDatabase | null = null;
 
@@ -290,7 +283,7 @@ export function createSqliteIndex(vaultPath: string): VaultIndex {
 		const misses: { id: number; path: string; content_hash: string }[] = [];
 
 		for (const f of files) {
-			const row = getCached.get(f.content_hash, model) as { vector: Buffer } | undefined;
+			const row = getCached.get(f.content_hash, embeddingCacheKey) as { vector: Buffer } | undefined;
 			if (row) vectors.set(f.id, bytesToVec(row.vector));
 			else misses.push(f);
 		}
@@ -307,7 +300,7 @@ export function createSqliteIndex(vaultPath: string): VaultIndex {
 			cache.transaction(() => {
 				misses.forEach((m, i) => {
 					vectors.set(m.id, embedded[i]);
-					putCache.run(m.content_hash, model, vecToBytes(embedded[i]));
+					putCache.run(m.content_hash, embeddingCacheKey, vecToBytes(embedded[i]));
 				});
 			})();
 		}

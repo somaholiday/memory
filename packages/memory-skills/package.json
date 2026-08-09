@@ -4,6 +4,7 @@
   "description": "Harness-neutral skills and CLI for a SQLite-backed Markdown memory vault",
   "license": "MIT",
   "type": "module",
+  "engines": { "node": ">=20" },
   "keywords": ["agent-skills", "pi-package", "memory", "markdown", "sqlite"],
   "pi": {
     "skills": ["./skills"]
@@ -18,6 +19,6 @@
     "yaml": "^2.9.0"
   },
   "scripts": {
-    "build": "tsup src/cli.ts --format esm --platform node --out-dir dist --external better-sqlite3 --external sqlite-vec"
+    "build": "tsup src/cli.ts --format esm --platform node --out-dir dist --external better-sqlite3 --external sqlite-vec && node -e \"require('node:fs').chmodSync('dist/cli.js', 0o755)\""
   }
 }

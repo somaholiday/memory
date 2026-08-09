@@ -125,6 +125,17 @@ export class MemoryVault {
     return result;
   }
 
+  delete(filename: string, commitMessage?: string): WriteResult {
+    this.assertInitialized();
+    const filePath = this.resolveFile(filename, true);
+    fs.unlinkSync(filePath);
+    this.index.rebuild();
+
+    const result: WriteResult = { path: filename, warnings: [] };
+    if (commitMessage) result.commit = commitFile(this.path, filename, commitMessage);
+    return result;
+  }
+
   validate() {
     this.assertInitialized();
     return validateVault(this.path);
