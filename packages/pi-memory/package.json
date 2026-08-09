@@ -1,0 +1,26 @@
+{
+  "name": "pi-memory",
+  "version": "0.1.0",
+  "description": "SQLite-backed long-term Markdown memory for Pi",
+  "license": "MIT",
+  "type": "module",
+  "keywords": ["pi-package", "memory", "markdown", "sqlite"],
+  "files": ["dist", "README.md", "LICENSE"],
+  "pi": {
+    "extensions": ["./dist/index.js"]
+  },
+  "dependencies": {
+    "better-sqlite3": "^12.8.0",
+    "sqlite-vec": "^0.1.9",
+    "yaml": "^2.9.0"
+  },
+  "peerDependencies": {
+    "@earendil-works/pi-ai": "*",
+    "@earendil-works/pi-coding-agent": "*",
+    "@earendil-works/pi-tui": "*",
+    "typebox": "*"
+  },
+  "scripts": {
+    "build": "tsup src/index.ts --format esm --platform node --out-dir dist --external better-sqlite3 --external sqlite-vec --external @earendil-works/pi-ai --external @earendil-works/pi-coding-agent --external @earendil-works/pi-tui --external typebox"
+  }
+}

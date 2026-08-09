@@ -1,0 +1,23 @@
+{
+  "name": "memory-skills",
+  "version": "0.1.0",
+  "description": "Harness-neutral skills and CLI for a SQLite-backed Markdown memory vault",
+  "license": "MIT",
+  "type": "module",
+  "keywords": ["agent-skills", "pi-package", "memory", "markdown", "sqlite"],
+  "pi": {
+    "skills": ["./skills"]
+  },
+  "files": ["dist", "skills", "README.md", "LICENSE"],
+  "bin": {
+    "memory-vault": "./dist/cli.js"
+  },
+  "dependencies": {
+    "better-sqlite3": "^12.8.0",
+    "sqlite-vec": "^0.1.9",
+    "yaml": "^2.9.0"
+  },
+  "scripts": {
+    "build": "tsup src/cli.ts --format esm --platform node --out-dir dist --external better-sqlite3 --external sqlite-vec"
+  }
+}

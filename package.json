@@ -1,0 +1,22 @@
+{
+  "name": "memory-vault-workspace",
+  "private": true,
+  "type": "module",
+  "workspaces": ["packages/*"],
+  "scripts": {
+    "build": "npm run build --workspace packages/pi-memory && npm run build --workspace packages/memory-skills",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@earendil-works/pi-ai": "^0.84.1",
+    "@earendil-works/pi-coding-agent": "^0.84.1",
+    "@earendil-works/pi-tui": "^0.84.1",
+    "@types/better-sqlite3": "^7.6.13",
+    "@types/node": "^24.0.0",
+    "tsup": "^8.5.0",
+    "typebox": "^1.3.11",
+    "typescript": "^5.9.0",
+    "vitest": "^4.1.10"
+  }
+}
