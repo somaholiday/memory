@@ -6,7 +6,7 @@
   "type": "module",
   "engines": { "node": ">=20" },
   "publishConfig": { "access": "public" },
-  "keywords": ["agent-skills", "pi-package", "memory", "markdown", "sqlite"],
+  "keywords": ["agent-skills", "memory", "markdown", "sqlite"],
   "pi": {
     "skills": ["./skills"]
   },
