@@ -12,6 +12,7 @@
   },
   "files": ["dist", "skills", "README.md", "LICENSE"],
   "bin": {
+    "memory-skills": "./dist/install.js",
     "memory-vault": "./dist/cli.js"
   },
   "dependencies": {
@@ -22,7 +23,7 @@
     "sqlite-vec": "^0.1.9"
   },
   "scripts": {
-    "build": "tsup src/cli.ts --format esm --platform node --out-dir dist --external better-sqlite3 --external sqlite-vec && node -e \"require('node:fs').chmodSync('dist/cli.js', 0o755)\"",
+    "build": "tsup src/cli.ts src/install.ts --format esm --platform node --out-dir dist --external better-sqlite3 --external sqlite-vec && node -e \"for (const file of ['dist/cli.js', 'dist/install.js']) require('node:fs').chmodSync(file, 0o755)\"",
     "prepack": "npm run build"
   }
 }
