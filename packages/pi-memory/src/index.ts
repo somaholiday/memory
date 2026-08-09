@@ -13,6 +13,7 @@ import { StringEnum } from "@earendil-works/pi-ai";
 import { Container, Markdown, Text } from "@earendil-works/pi-tui";
 import { Type } from "typebox";
 import * as path from "node:path";
+import { memoryBrowserFactory, searchBrowserFactory } from "./browser.js";
 import {
   formatSearchResponse,
   formatValidationResult,
@@ -163,7 +164,9 @@ export default function memoryExtension(pi: ExtensionAPI) {
           ctx.ui.notify(`No memories found for "${input}"`, "warning");
           return;
         }
-        const selected = await ctx.ui.select("Choose a memory", result.files.map((file) => file.path));
+        const selected = ctx.mode === "tui"
+          ? await ctx.ui.custom<string | null>(searchBrowserFactory(result.files, input))
+          : await ctx.ui.select("Choose a memory", result.files.map((file) => file.path)) ?? null;
         if (selected) loadMemory(selected);
         return;
       }
@@ -172,12 +175,15 @@ export default function memoryExtension(pi: ExtensionAPI) {
         ctx.ui.notify("No memories found", "warning");
         return;
       }
-      const selected = await ctx.ui.select("Choose a memory", files.map((file) => file.path));
+      const selected = ctx.mode === "tui"
+        ? await ctx.ui.custom<string | null>(memoryBrowserFactory(files))
+        : await ctx.ui.select("Choose a memory", files.map((file) => file.path)) ?? null;
       if (selected) loadMemory(selected);
 
       function loadMemory(filename: string) {
         const content = vault.read(filename);
         pi.sendMessage({ customType: "memory", content, display: true, details: { title: filename } }, { triggerTurn: false });
+        ctx.ui.notify(`Loaded: ${filename}`, "info");
       }
     },
   });

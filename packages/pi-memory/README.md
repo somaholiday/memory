@@ -25,6 +25,8 @@ Restart Pi, then run:
 
 The extension registers `memory_read`, `memory_write`, and `/memory`. It works without the companion skills package.
 
+Run `/memory` to browse titles and previews in a fuzzy-filtered picker, or `/memory <query>` to search the vault before opening the picker.
+
 ## Configuration
 
 `MEMORY_VAULT` selects the Markdown directory. Without it, the extension uses `~/Memory`.
