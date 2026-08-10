@@ -17,12 +17,16 @@ export interface InstallSkillsResult {
   targetDir: string;
 }
 
+export function findSkillCollisions(targetDir: string): string[] {
+  return SKILL_NAMES.filter((name) => fs.existsSync(path.join(path.resolve(targetDir), name)));
+}
+
 export function installSkills(options: InstallSkillsOptions): InstallSkillsResult {
   const sourceDir = path.resolve(options.sourceDir);
   const targetDir = path.resolve(options.targetDir);
   fs.mkdirSync(targetDir, { recursive: true });
 
-  const collisions = SKILL_NAMES.filter((name) => fs.existsSync(path.join(targetDir, name)));
+  const collisions = findSkillCollisions(targetDir);
   if (collisions.length > 0 && !options.force) {
     throw new Error(
       `Refusing to replace existing skills: ${collisions.join(", ")}. Re-run with --force after reviewing them.`,
