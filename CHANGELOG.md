@@ -1,5 +1,12 @@
 # Changelog
 
+## Unreleased
+
+### Added
+
+- Interactive skill installation with automatic Claude Code, Codex, and Pi detection.
+- Optional `fzf` multi-select with a built-in numbered prompt fallback.
+
 ## 0.1.0 — 2026-08-08
 
 ### Added

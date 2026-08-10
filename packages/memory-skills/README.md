@@ -30,27 +30,30 @@ No copy step is needed.
 
 ## Install in another harness
 
-Install the CLI, then copy the skills into the harness's Agent Skills directory:
+Install the CLI, then let it detect Claude Code, Codex, and Pi:
 
 ```bash
 npm install --global memory-skills
-memory-skills install ~/.agents/skills
+memory-skills install
 ```
 
-Common targets:
+Select one or more detected agents. The installer uses `fzf --multi` when available and falls back to a numbered terminal prompt. It installs into each agent's user skill directory:
+
+- Claude Code: `~/.claude/skills`
+- Codex: `~/.agents/skills`
+- Pi: `~/.pi/agent/skills`
+
+For scripts, install into every detected agent or pass an explicit directory:
 
 ```bash
-# Shared Agent Skills directory used by several harnesses
+memory-skills install --all
 memory-skills install ~/.agents/skills
-
-# Claude Code user skills
-memory-skills install ~/.claude/skills
 ```
 
 The installer refuses to replace an existing skill. Review it, then opt in when updating:
 
 ```bash
-memory-skills install ~/.agents/skills --force
+memory-skills install --force
 ```
 
 Harnesses that accept an external skill path can use the package in place:

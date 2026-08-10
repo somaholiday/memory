@@ -33,7 +33,7 @@ Set `MEMORY_VAULT` before starting Pi to use another directory.
 
 ```bash
 npm install --global memory-skills
-memory-skills install ~/.agents/skills
+memory-skills install
 export MEMORY_VAULT="$HOME/Memory"
 memory-vault init
 ```
