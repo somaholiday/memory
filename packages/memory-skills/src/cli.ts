@@ -18,6 +18,7 @@ Commands:
   list                         List memories
   search <query>               Search with BM25 and optional vectors
   read <filename.md>           Read one memory
+  hash <filename.md>           Print a memory's content hash for --expect-hash
   write <filename.md>          Write content from --content-file or stdin
   delete <filename.md>         Delete one memory
   validate                     Validate all memories
@@ -27,6 +28,8 @@ Options:
   --json                       Emit JSON
   --content-file <path>        Read write content from a file
   --commit-message <message>   Commit a write when the vault is a Git repo
+  --expect-hash <hash>         Fail the write if the memory changed since this hash
+  --force                      Overwrite even if the memory changed since it was read
 `;
 
 const { values, positionals } = parseArgs({
@@ -36,6 +39,8 @@ const { values, positionals } = parseArgs({
     json: { type: "boolean", default: false },
     "content-file": { type: "string" },
     "commit-message": { type: "string" },
+    "expect-hash": { type: "string" },
+    force: { type: "boolean", default: false },
     help: { type: "boolean", short: "h", default: false },
   },
 });
@@ -91,6 +96,13 @@ async function main(): Promise<void> {
       output({ path: filename, content }, () => content);
       return;
     }
+    case "hash": {
+      const filename = args[0];
+      if (!filename) throw new Error("hash requires a filename");
+      const hash = vault.hash(filename);
+      output({ path: filename, hash }, () => hash);
+      return;
+    }
     case "write": {
       const filename = args[0];
       if (!filename) throw new Error("write requires a filename");
@@ -101,6 +113,8 @@ async function main(): Promise<void> {
         path: filename,
         content,
         commitMessage: values["commit-message"],
+        expectedHash: values["expect-hash"],
+        force: values.force,
       });
       output(result, () => `Memory saved: ${result.path}${result.commit ? `\n${result.commit}` : ""}`);
       return;

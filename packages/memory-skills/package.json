@@ -1,6 +1,6 @@
 {
   "name": "memory-skills",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Harness-neutral skills and CLI for a SQLite-backed Markdown memory vault",
   "author": "Soma Holiday <soma@somaholiday.com>",
   "license": "MIT",
