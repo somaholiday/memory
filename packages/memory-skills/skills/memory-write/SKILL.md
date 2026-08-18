@@ -28,6 +28,17 @@ Add `--commit-message "<message>"` only when the user wants Git commits. If the 
 
 Prefer updating existing files over creating new ones. Before writing, search the vault for an existing memory on the same topic. Use native memory search or filesystem `rg`. Update in place when the topic matches; create a new file only when the topic is distinct.
 
+## Concurrent Writes
+
+Another session may write the same memory between your read and your write. When you update an existing memory through the CLI, capture its hash when you read it and pass that hash on write:
+
+```bash
+memory-vault hash "<filename>.md"
+memory-vault write "<filename>.md" --content-file "<draft-file>" --expect-hash "<hash>"
+```
+
+If the write reports a memory conflict, the file changed since you read it. Re-read it, merge both versions into a new draft, get confirmation, and write again. Use `--force` only when the user explicitly approves overwriting the other change. Native memory tools may track this automatically and raise the same conflict error.
+
 ## Required Confirmation
 
 Before writing anything:

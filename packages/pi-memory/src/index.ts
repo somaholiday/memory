@@ -21,7 +21,7 @@ import {
 } from "../../core/src/index.js";
 
 export default function memoryExtension(pi: ExtensionAPI) {
-  const vault = openMemoryVault();
+  const vault = openMemoryVault({ requireReadBeforeWrite: true });
 
   pi.registerMessageRenderer("memory", (message, { expanded }, theme) => {
     const details = message.details as { title?: string } | undefined;
@@ -113,11 +113,13 @@ export default function memoryExtension(pi: ExtensionAPI) {
     promptGuidelines: [
       "Before memory_write, search for an existing note, show the full draft and path, and wait for explicit user approval.",
       "Use memory_write only with type, title, description, status, date, tags, and related frontmatter.",
+      "On a memory conflict error, re-read the memory, merge both versions, and write again; use force only after the user explicitly approves overwriting.",
     ],
     parameters: Type.Object({
       path: Type.String({ description: "Root-level .md filename" }),
       content: Type.String({ description: "Full approved Markdown content" }),
       commitMessage: Type.Optional(Type.String({ description: "Optional Git commit message" })),
+      force: Type.Optional(Type.Boolean({ description: "Overwrite despite a conflict; only with explicit user approval" })),
     }),
     async execute(_toolCallId, params) {
       const target = path.join(vault.path, params.path);

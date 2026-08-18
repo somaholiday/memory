@@ -2,6 +2,7 @@
 // It hides path safety, validation, SQLite search, embeddings, and optional Git.
 
 import { execFileSync } from "node:child_process";
+import { createHash } from "node:crypto";
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
@@ -13,12 +14,22 @@ import type { MemoryEntry, SearchResult, VaultStatus, WriteResult } from "./type
 
 export interface OpenMemoryVaultOptions {
   path?: string;
+  /** Refuse to overwrite a memory this vault instance has not read. */
+  requireReadBeforeWrite?: boolean;
 }
 
 export interface WriteMemoryOptions {
   path: string;
   content: string;
   commitMessage?: string;
+  /** Hash of the content this write is based on; the write fails if the file changed. */
+  expectedHash?: string;
+  /** Skip stale-read and read-before-write checks. */
+  force?: boolean;
+}
+
+export function hashMemoryContent(content: string): string {
+  return createHash("sha256").update(content, "utf-8").digest("hex");
 }
 
 function defaultVaultPath(): string {
@@ -61,10 +72,13 @@ function commitFile(cwd: string, filename: string, message: string): string | un
 export class MemoryVault {
   readonly path: string;
   private readonly index;
+  private readonly requireReadBeforeWrite: boolean;
+  private readonly readHashes = new Map<string, string>();
 
   constructor(options: OpenMemoryVaultOptions = {}) {
     this.path = path.resolve(options.path ?? defaultVaultPath());
     this.index = createSqliteIndex(this.path);
+    this.requireReadBeforeWrite = options.requireReadBeforeWrite ?? false;
   }
 
   init(): VaultStatus {
@@ -102,12 +116,22 @@ export class MemoryVault {
   read(filename: string): string {
     this.assertInitialized();
     const filePath = this.resolveFile(filename, true);
-    return fs.readFileSync(filePath, "utf-8");
+    const content = fs.readFileSync(filePath, "utf-8");
+    this.readHashes.set(filename, hashMemoryContent(content));
+    return content;
+  }
+
+  /** Hash of a memory's current content, for expectedHash preconditions. */
+  hash(filename: string): string {
+    this.assertInitialized();
+    const filePath = this.resolveFile(filename, true);
+    return hashMemoryContent(fs.readFileSync(filePath, "utf-8"));
   }
 
   write(options: WriteMemoryOptions): WriteResult {
     this.assertInitialized();
     const filePath = this.resolveFile(options.path, false);
+    this.assertWriteSafe(options, filePath);
     const validation = validateMemoryContent(options.content, {
       vaultPath: this.path,
       memoryPath: options.path,
@@ -119,6 +143,7 @@ export class MemoryVault {
     const temporaryPath = `${filePath}.tmp-${process.pid}`;
     fs.writeFileSync(temporaryPath, options.content, "utf-8");
     fs.renameSync(temporaryPath, filePath);
+    this.readHashes.set(options.path, hashMemoryContent(options.content));
     this.index.rebuild();
 
     const result: WriteResult = { path: options.path, warnings: validation.warnings };
@@ -130,6 +155,7 @@ export class MemoryVault {
     this.assertInitialized();
     const filePath = this.resolveFile(filename, true);
     fs.unlinkSync(filePath);
+    this.readHashes.delete(filename);
     this.index.rebuild();
 
     const result: WriteResult = { path: filename, warnings: [] };
@@ -140,6 +166,27 @@ export class MemoryVault {
   validate() {
     this.assertInitialized();
     return validateVault(this.path);
+  }
+
+  private assertWriteSafe(options: WriteMemoryOptions, filePath: string): void {
+    if (options.force || !fs.existsSync(filePath)) return;
+    const currentHash = hashMemoryContent(fs.readFileSync(filePath, "utf-8"));
+    const expected = options.expectedHash ?? this.readHashes.get(options.path);
+    if (expected === undefined) {
+      if (this.requireReadBeforeWrite) {
+        throw new Error(
+          `Memory conflict: ${options.path} exists but was not read in this session. ` +
+          `Read it first and merge your changes, or pass force to overwrite.`,
+        );
+      }
+      return;
+    }
+    if (expected !== currentHash) {
+      throw new Error(
+        `Memory conflict: ${options.path} changed since it was read (another session may have written it). ` +
+        `Re-read it, merge your changes, and write again — or pass force to overwrite.`,
+      );
+    }
   }
 
   private assertInitialized(): void {
